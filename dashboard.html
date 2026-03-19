@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBP Da Nang - Dashboard Kết Quả</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #10B981;
+            --primary-hover: #059669;
+            --primary-light: #D1FAE5;
+            --secondary: #6B7280;
+            --bg-page: #F3F8F5;
+            --bg-card: #FFFFFF;
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+            --border: #E5E7EB;
+            --shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.05), 0 8px 10px -6px rgba(16, 185, 129, 0.05);
+            --glass: rgba(255, 255, 255, 0.85);
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+            font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            display: flex; height: 100vh; overflow: hidden;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width); background: var(--bg-card);
+            border-right: 1px solid var(--border); display: flex;
+            flex-direction: column; padding: 24px; height: 100%; z-index: 10;
+        }
+
+        .logo {
+            display: flex; align-items: center; gap: 12px;
+            font-size: 1.25rem; font-weight: 700; color: var(--primary);
+            padding-bottom: 32px; border-bottom: 1px solid var(--border);
+        }
+
+        .nav-links { list-style: none; margin-top: 32px; }
+
+        .nav-item {
+            padding: 14px 18px; border-radius: 12px; margin-bottom: 8px;
+            cursor: pointer; font-weight: 500; color: var(--text-muted);
+            transition: all 0.3s ease; display: flex; align-items: center; gap: 12px;
+        }
+
+        .nav-item:hover { background: var(--bg-page); color: var(--primary); }
+        .nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+
+        .main-wrapper { flex-grow: 1; display: flex; flex-direction: column; height: 100%; }
+
+        .navbar {
+            height: 80px; background: var(--glass); display: flex;
+            align-items: center; justify-content: space-between; padding: 0 40px;
+            border-bottom: 1px solid var(--border); z-index: 9;
+        }
+
+        .navbar button {
+            background: var(--primary); color: white; border: none;
+            padding: 10px 20px; border-radius: 10px; font-weight: 600; cursor: pointer;
+        }
+
+        .content-panel { flex-grow: 1; padding: 40px; overflow-y: auto; }
+
+        /* Dashboard specific */
+        .dashboard-grid {
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 30px; margin-bottom: 40px;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            color: white; padding: 30px; border-radius: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .card-header-sub {
+            font-size: 0.75rem; font-weight: 600; color: var(--primary); margin-bottom: 20px;
+        }
+
+        .score-number {
+            font-size: 5rem; font-weight: 800;
+            background: linear-gradient(to bottom, #FFFFFF, #D1FAE5);
+            -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        .badge-container {
+            margin-top: 24px; background: rgba(255,255,255,0.05); padding: 16px 24px;
+            border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);
+            display: flex; align-items: center; gap: 12px;
+        }
+
+        .chart-card {
+            background: white; padding: 30px; border-radius: 20px; border: 1px solid var(--border);
+        }
+
+        .chart-wrapper {
+            flex-grow: 1; position: relative; max-height: 350px; display: flex; align-items: center; justify-content: center;
+        }
+
+        .breakdown-headline { font-size: 1.25rem; font-weight: 700; margin-top: 30px; margin-bottom: 15px; }
+
+        .breakdown-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;
+        }
+
+        .pillar-detail-card {
+            background: white; padding: 24px; border-radius: 16px; border: 1px solid var(--border);
+        }
+
+        .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .detail-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        .detail-score { font-size: 2rem; font-weight: 800; }
+
+        .recommendation-card {
+            background: linear-gradient(135deg, #ECFDF5 0%, #FFFFFF 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 16px; padding: 24px;
+            display: flex; flex-direction: column; gap: 12px; position: relative;
+        }
+
+        .rec-pillar-badge { position: absolute; top: 12px; right: 12px; font-size: 0.65rem; background: white; padding: 4px 8px; border-radius: 20px; }
+        .rec-title { font-weight: 700; color: #065F46; }
+        .rec-text { font-size: 0.9rem; font-style: italic; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #pdf-report-template, #pdf-report-template * { visibility: visible; }
+            #pdf-report-template {
+                position: absolute; left: 0; top: 0; width: 100% !important;
+                display: block !important; background: white !important; padding: 20px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="logo"><i class="fa-solid fa-feather-pointed"></i><span>RBP Da Nang</span></div>
+        <ul class="nav-links">
+            <li class="nav-item" onclick="window.location.href='assessment.html'"><i class="fa-solid fa-file-signature"></i><span>Khảo sát</span></li>
+            <li class="nav-item active"><i class="fa-solid fa-chart-pie"></i><span>Dashboard</span></li>
+        </ul>
+    </aside>
+
+    <div class="main-wrapper">
+        <nav class="navbar">
+            <h2 style="font-weight: 600;"><i class="fa-solid fa-gauge-high"></i> Bảng điều khiển Kết quả</h2>
+            <button id="download-pdf"><i class="fa-solid fa-file-pdf"></i> In báo cáo PDF</button>
+        </nav>
+
+        <main class="content-panel">
+            <div class="dashboard-grid">
+                <div class="score-card">
+                    <div class="card-header-sub">DIỂM ĐÁNH GIÁ TỔNG QUAN</div>
+                    <div class="score-number" id="total-score">0</div>
+                    <div class="badge-container">
+                        <div id="badge-tier-icon"><i class="fa-solid fa-medal"></i></div>
+                        <div class="badge-title" id="badge-title">Chưa xếp hạng</div>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <div class="card-header-sub">HIỆU SUẤT RBP (4 TRỤ CỘT)</div>
+                    <div class="chart-wrapper"><canvas id="spiderChart"></canvas></div>
+                </div>
+            </div>
+
+            <div class="breakdown-headline">Chi tiết điểm thành phần</div>
+            <div class="breakdown-grid" id="breakdown-grid"></div>
+
+            <div class="breakdown-headline" style="color: #047857;"><i class="fa-solid fa-wand-magic-sparkles"></i> Gợi ý hành động</div>
+            <div class="recommendations-container" id="recommendations-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px;"></div>
+
+            <!-- PDF Template -->
+            <div id="pdf-report-template" style="display: none; font-family: 'Outfit', sans-serif;">
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h1 style="color: #065F46; font-size: 1.5rem;">BÁO CÁO KẾT QUẢ ĐÁNH GIÁ RBP</h1>
+                    <p style="font-size: 0.8rem;">VCCI Miền Trung - RBP Platform</p>
+                </div>
+                <hr>
+                <div style="text-align: center; margin: 20px 0;">
+                    <span style="font-size: 3rem; font-weight: 800; color: #10B981;" id="pdf-score">0</span> / 100
+                    <div id="pdf-tier" style="font-weight: 800; margin-top: 10px;">Chưa xếp hạng</div>
+                </div>
+                <div style="text-align: center; border: 1px solid #E5E7EB; border-radius: 12px; padding: 10px;">
+                    <img id="pdf-chart-image" style="max-height: 250px; display: block; margin: 0 auto;">
+                </div>
+                <div style="font-weight: 800; margin: 20px 0 10px;">AI Recommendations:</div>
+                <div id="pdf-recs"></div>
+                <div style="text-align: center; margin-top: 30px; font-style: italic; color: #10B981;">"One life, live it, and be kind"</div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const adviceMap = {
+            "G2": { title: "🌿 Xây dựng Sổ tay nhân viên", text: "Chỉ một tài liệu ngắn gọn quy tắc đạo đức. Hãy làm cho doanh nghiệp của bạn tốt hơn!", pillar: "Quản trị" },
+            "G3": { title: "🤝 Cam kết Chống tham nhũng", text: "Ký cam kết không hối lộ – bước đi nhỏ khẳng định giá trị lớn.", pillar: "Quản trị" },
+            "S7": { title: "❤️ Tủ thuốc Y tế Dự phòng", text: "Sức khỏe nhân viên là vô giá. Đầu tư một tủ thuốc nhỏ chứng minh bạn luôn chu toàn.", pillar: "Xã hội" },
+            "E1": { title: "💡 Nhãn dán Tiết kiệm năng lượng", text: "Dán sticker tắt điện dọn nước – vừa cắt giảm chi phí vừa bảo vệ môi trường.", pillar: "Môi trường" },
+            "C1": { title: "🏢 Ưu tiên Đối tác Địa phương", text: "Chọn nhà cung cấp Đà Nẵng kết nối mạng lưới thân thiện.", pillar: "Cộng đồng" }
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const scoreData = localStorage.getItem('rbp_scores');
+            const totalScoreStr = localStorage.getItem('rbp_total');
+            const answersData = localStorage.getItem('rbp_answers');
+
+            if (!scoreData || !totalScoreStr) {
+                 alert("Chưa có dữ liệu. Hãy làm khảo sát trước.");
+                 window.location.href = "assessment.html";
+                 return;
+            }
+
+            const scores = JSON.parse(scoreData);
+            const totalScore = parseFloat(totalScoreStr);
+            const answers = answersData ? JSON.parse(answersData) : {};
+
+            document.getElementById('total-score').innerText = totalScore;
+            updateBadge(totalScore);
+            renderBreakdownGrid(scores);
+            renderSpiderChart(scores);
+            renderRecommendations(answers);
+            setupPdfDownload(scores, totalScore, selectedAdviceForPdf);
+        });
+
+        let selectedAdviceForPdf = [];
+
+        function renderRecommendations(answers) {
+            const grid = document.getElementById('recommendations-grid');
+            const missedQuizIds = Object.keys(answers).filter(key => answers[key] === 'No');
+            selectedAdviceForPdf = [];
+
+            missedQuizIds.forEach(id => {
+                if(adviceMap[id] && selectedAdviceForPdf.length < 3) selectedAdviceForPdf.push({ id, ...adviceMap[id] });
+            });
+
+            if (selectedAdviceForPdf.length === 0) {
+                selectedAdviceForPdf = [{ id: "G2", ...adviceMap["G2"] }, { id: "S7", ...adviceMap["S7"] }, { id: "E1", ...adviceMap["E1"] }];
+            }
+
+            grid.innerHTML = selectedAdviceForPdf.map(rec => `
+                <div class="recommendation-card">
+                    <span class="rec-pillar-badge">${rec.pillar}</span>
+                    <div class="rec-title">${rec.title}</div>
+                    <div class="rec-text">"${rec.text}"</div>
+                </div>
+            `).join('');
+        }
+
+        function setupPdfDownload(scores, totalScore, recs) {
+            const btn = document.getElementById('download-pdf');
+            if(!btn) return;
+            btn.addEventListener('click', () => {
+                document.getElementById('pdf-score').innerText = totalScore;
+                document.getElementById('pdf-tier').innerText = document.getElementById('badge-title').innerText;
+                const canvas = document.getElementById('spiderChart');
+                document.getElementById('pdf-chart-image').src = canvas.toDataURL('image/png');
+                
+                const pdfRecs = document.getElementById('pdf-recs');
+                pdfRecs.innerHTML = recs.map(r => `<div>[${r.pillar}] ${r.title}: <i>${r.text}</i></div>`).join('');
+                
+                setTimeout(() => { window.print(); }, 500);
+            });
+        }
+
+        function updateBadge(score) {
+            const badgeIcon = document.getElementById('badge-tier-icon');
+            const badgeTitle = document.getElementById('badge-title');
+            if (score >= 85) { badgeTitle.innerText = "Platinum (Xuất sắc)"; badgeIcon.style.color = "#E5E7EB"; }
+            else if (score >= 70) { badgeTitle.innerText = "Gold (Tiên tiến)"; badgeIcon.style.color = "#FBBF24"; }
+            else if (score >= 50) { badgeTitle.innerText = "Silver (Thiết lập)"; badgeIcon.style.color = "#9CA3AF"; }
+            else { badgeTitle.innerText = "Compliant (Đạt chuẩn)"; badgeIcon.style.color = "#10B981"; }
+        }
+
+        function renderBreakdownGrid(scores) {
+            const grid = document.getElementById('breakdown-grid');
+            const pillars = [
+                { id: 'G', name: 'Quản trị', icon: 'fa-building-shield', color: '#10B981', bg: '#ECFDF5' },
+                { id: 'S', name: 'Xã hội', icon: 'fa-users', color: '#3B82F6', bg: '#EFF6FF' },
+                { id: 'E', name: 'Môi trường', icon: 'fa-leaf', color: '#10B981', bg: '#ECFDF5' },
+                { id: 'C', name: 'Cộng đồng', icon: 'fa-handshake-angle', color: '#8B5CF6', bg: '#F5F3FF' }
+            ];
+            grid.innerHTML = pillars.map(p => `
+                <div class="pillar-detail-card">
+                    <div class="detail-header">
+                        <div class="detail-icon" style="background: ${p.bg}; color: ${p.color}"><i class="fa-solid ${p.icon}"></i></div>
+                        <div class="detail-score">${scores[p.id] || 0}</div>
+                    </div>
+                    <div class="detail-title">${p.name}</div><span class="detail-max">tối đa 25 điểm</span>
+                </div>
+            `).join('');
+        }
+
+        function renderSpiderChart(scores) {
+            const ctx = document.getElementById('spiderChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Quản trị', 'Xã hội', 'Môi trường', 'Cộng đồng'],
+                    datasets: [{
+                        data: [scores.G||0, scores.S||0, scores.E||0, scores.C||0],
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: '#10B981', borderWidth: 2
+                    }]
+                },
+                options: { scales: { r: { suggestedMin: 0, suggestedMax: 25 } }, plugins: { legend: { display: false } }, maintainAspectRatio: false }
+            });
+        }
+    </script>
+
+</body>
+</html>

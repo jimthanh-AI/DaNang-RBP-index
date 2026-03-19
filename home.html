@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RBP Da Nang Index | Cổng thông tin Dự án</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-grad: linear-gradient(135deg, #022c22 0%, #064e3b 100%);
+            --accent-grad: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+
+        body { background: var(--primary-grad); color: #ffffff; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 4%; backdrop-filter: blur(10px); border-bottom: 1px solid var(--glass-border); }
+
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 1.4rem; font-weight: 700; }
+        .logo i { font-size: 1.8rem; background: var(--accent-grad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .hero { text-align: center; padding: 4rem 1rem 2rem; max-width: 800px; margin: 0 auto; }
+        .hero h1 { font-size: 3rem; font-weight: 800; line-height: 1.2; margin-bottom: 1rem; background: linear-gradient(to right, #ffffff, #a7f3d0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.1rem; color: #d1fae5; opacity: 0.9; }
+
+        .portal-container { flex-grow: 1; display: flex; justify-content: center; align-items: center; padding: 2rem 4% 4rem; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; width: 100%; max-width: 1100px; }
+
+        .card {
+            background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 20px; padding: 2.5rem 2rem;
+            text-align: center; backdrop-filter: blur(16px); transition: all 0.4s; text-decoration: none; color: #ffffff;
+        }
+
+        .card:hover { transform: translateY(-8px); border-color: rgba(16, 185, 129, 0.4); background: rgba(255, 255, 255, 0.08); }
+
+        .icon-box {
+            background: var(--accent-grad); width: 70px; height: 70px; border-radius: 18px;
+            display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1.5rem;
+        }
+
+        .card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 0.8rem; }
+        .card-desc { font-size: 0.95rem; color: #d1fae5; opacity: 0.8; line-height: 1.5; margin-bottom: 1.5rem; min-height: 45px; }
+        .badge { background: rgba(255, 255, 255, 0.1); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; color: #34d399; }
+
+        .footer { text-align: center; padding: 1.5rem; border-top: 1px solid var(--glass-border); font-size: 0.9rem; color: #a7f3d0; }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="logo"><i class="fa-solid fa-earth-asia"></i><span>RBP DA NANG</span></div>
+        <div class="badge">VCCI Miền Trung</div>
+    </div>
+
+    <div class="hero">
+        <h1>Nền tảng Tự đánh giá Doanh nghiệp Bền vững</h1>
+        <p>Hệ thống hỗ trợ SME phân tích và tối ưu hoá Các thực hành Kinh doanh có Trách nhiệm (Responsible Business Practices) tại Đà Nẵng.</p>
+    </div>
+
+    <div class="portal-container">
+        <div class="grid">
+            
+            <a href="assessment.html" class="card">
+                <div class="icon-box"><i class="fa-solid fa-clipboard-check"></i></div>
+                <div class="card-title">Doanh nghiệp Khảo sát</div>
+                <div class="card-desc">Xét duyệt 40 chỉ số đánh giá 4 Trụ cột RBP. Nhận xếp hạng ngay sau 5 phút.</div>
+                <span class="badge">Cho Doanh nghiệp</span>
+            </a>
+
+            <a href="dashboard.html" class="card">
+                <div class="icon-box"><i class="fa-solid fa-chart-pie"></i></div>
+                <div class="card-title">Báo cáo Kết quả</div>
+                <div class="card-desc">Xem biểu đồ Radar, theo dõi chấm điểm và tải báo cáo PDF kèm AI Advice.</div>
+                <span class="badge">Quản lý nội bộ</span>
+            </a>
+
+            <a href="admin.html" class="card">
+                <div class="icon-box"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="card-title">Quản trị VCCI MTTN</div>
+                <div class="card-desc">Bảng điều hành phân tích dữ liệu Tổng thể, trích xuất dữ liệu cho Cán bộ VCCI.</div>
+                <span class="badge">Bảo mật Admin</span>
+            </a>
+
+        </div>
+    </div>
+
+    <div class="footer">
+        One life, live it, and be kind. &copy; 2026 RBP Da Nang Platform
+    </div>
+
+</body>
+</html>
