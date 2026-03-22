@@ -218,12 +218,6 @@ function loadDraft() {
 }
 
 function triggerSubmit() {
-    const answeredCount = Object.keys(userAnswers).filter(k => k !== 'uploads').length;
-    if (answeredCount < totalQuestions) {
-        const proceed = confirm(`Bạn mới trả lời ${answeredCount}/${totalQuestions} câu hỏi. Bạn có chắc muốn hoàn tất tính điểm không?`);
-        if (!proceed) return;
-    }
-
     // Scoring calculation
     let totalScore = 0;
     let scoresByPillar = { G: 0, S: 0, E: 0, C: 0 };
