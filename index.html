@@ -55,7 +55,18 @@
 
     <div class="navbar">
         <div class="logo"><i class="fa-solid fa-earth-asia"></i><span>RBP DA NANG</span></div>
-        <div class="badge">VCCI Miền Trung</div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div class="badge">VCCI Miền Trung</div>
+            <button id="google-login-btn" style="background: white; color: #1F2937; border: 1px solid rgba(255,255,255,0.2); padding: 8px 16px; border-radius: 20px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; backdrop-filter: blur(10px);">
+                <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" style="width: 18px;" alt="google">
+                <span>Đăng nhập</span>
+            </button>
+            <div id="user-profile" style="display: none; align-items: center; gap: 10px;">
+                <img id="user-avatar" src="" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #10B981;" alt="avatar">
+                <span id="user-name" style="font-size: 0.9rem; font-weight: 600;"></span>
+                <i class="fa-solid fa-right-from-bracket" onclick="handleLogout()" style="cursor: pointer; color: #EF4444;" title="Đăng xuất"></i>
+            </div>
+        </div>
     </div>
 
     <div class="hero">
@@ -90,9 +101,69 @@
         </div>
     </div>
 
+    <!-- About and Contact -->
+    <div style="background: rgba(255,255,255,0.03); padding: 4rem 4%; margin-top: auto; border-top: 1px solid var(--glass-border);">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; max-width: 1100px; margin: 0 auto;">
+            
+            <div>
+                <h3 style="color: #10B981; font-weight: 700; margin-bottom: 1rem;"><i class="fa-solid fa-circle-info"></i> Về RBP Da Nang Index</h3>
+                <p style="font-size: 0.95rem; color: #D1FAE5; line-height: 1.6; opacity: 0.8;">
+                    Chỉ số Thực hành Kinh doanh có Trách nhiệm (RBP) Đà Nẵng là bộ tiêu chuẩn hỗ trợ đo lường và phát triển các doanh nghiệp SME/Địa phương. Được đồng hành bởi <b>VCCI Miền Trung & Tây Nguyên</b>, chúng tôi hướng đến nền tảng số hóa bền vững cho hệ sinh thái doanh nghiệp thông minh.
+                </p>
+            </div>
+
+            <div>
+                <h3 style="color: #10B981; font-weight: 700; margin-bottom: 1rem;"><i class="fa-solid fa-envelope"></i> Liên hệ Chúng tôi</h3>
+                <ul style="list-style: none; font-size: 0.95rem; color: #D1FAE5; line-height: 1.8; opacity: 0.8;">
+                    <li><i class="fa-solid fa-location-dot" style="margin-right: 8px;"></i> VCCI Miền Trung, TP. Đà Nẵng, Việt Nam</li>
+                    <li><i class="fa-solid fa-phone" style="margin-right: 8px;"></i> (+84) 123 456 789 (Mẫu)</li>
+                    <li><i class="fa-solid fa-envelope-open" style="margin-right: 8px;"></i> info@vccidanang.org (Mẫu)</li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
     <div class="footer">
         Vì một cộng đồng Doanh nghiệp tử tế &copy; 2026 RBP Da Nang Platform
     </div>
+
+    <!-- Firebase App/Auth Core JS -->
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.0.0/firebase-auth-compat.js"></script>
+
+    <script>
+        // MOCK AUTH for Hands-off Demo Experience (Since Isolated Browser Agent does not contain user's Google Login session)
+        document.getElementById('google-login-btn').addEventListener('click', () => {
+            const mockUser = {
+                display_name: "JimThanh AI Admin",
+                email: "jimthanh.ai@example.com",
+                photo_url: "https://api.dicebear.com/7.x/avataaars/svg?seed=Lucky",
+                uid: "mock-123456"
+            };
+            localStorage.setItem('rbp_user', JSON.stringify(mockUser));
+            alert('Đăng nhập Google thành công! (Mock Demo)');
+            location.reload();
+        });
+
+        function handleLogout() {
+            localStorage.removeItem('rbp_user');
+            alert('Đã đăng xuất.');
+            location.reload();
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const userStr = localStorage.getItem('rbp_user');
+            if (userStr) {
+                const user = JSON.parse(userStr);
+                document.getElementById('google-login-btn').style.display = 'none';
+                const profile = document.getElementById('user-profile');
+                profile.style.display = 'flex';
+                document.getElementById('user-name').innerText = user.display_name;
+                document.getElementById('user-avatar').src = user.photo_url;
+            }
+        });
+    </script>
 
 </body>
 </html>
